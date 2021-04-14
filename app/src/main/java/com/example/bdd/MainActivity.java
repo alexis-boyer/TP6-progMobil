@@ -1,6 +1,9 @@
 package com.example.bdd;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import android.content.SharedPreferences;
@@ -13,15 +16,23 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    private RecyclerView mRecyclerView;
+    private MonRecyclerViewAdapter mAdapter;
+    private RecyclerView.LayoutManager mLayoutManager;
+    CoordinatorLayout mcoordinatorLayout;
     final String PREFS_NAME = "preferences_file";
+    List<Planete> planetes;
 
-    TextView tv ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tv = findViewById(R.id.tv);
+        mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        mLayoutManager=new GridLayoutManager(this,1,GridLayoutManager.VERTICAL, false);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+        mcoordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         AppDatabase db = Room.databaseBuilder(getApplicationContext(),
                 AppDatabase.class, "planetesDB").build();
@@ -44,17 +55,10 @@ public class MainActivity extends AppCompatActivity {
                     settings.edit().putBoolean("is_data_loaded", false).commit();
                 }
 
-                List<Planete> planetes = planeteDao.getAll();
+                planetes = planeteDao.getAll();
 
-                tv.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        tv.setText("Il y a [" + planetes.size() + "] Planètes dans la base de données" );
-                        for (int i =0; i< planetes.size();i++) {
-                            Toast.makeText(MainActivity.this, "Planete = " + planetes.get(i).getNom(), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
+                mAdapter = new MonRecyclerViewAdapter(planetes);
+                mRecyclerView.setAdapter(mAdapter);
 
             }
         }).start();
