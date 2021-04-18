@@ -14,6 +14,7 @@ import java.util.List;
 
 @Dao
 public interface PlaneteDao {
+
     @Query("SELECT * FROM planete")
     List<Planete> getAll();
 

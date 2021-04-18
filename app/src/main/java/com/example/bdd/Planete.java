@@ -6,6 +6,8 @@ import androidx.room.PrimaryKey;
 
 @Entity
 public class Planete {
+
+    public static int uidMax = 1;
     @PrimaryKey
     public int uid;
 
@@ -19,6 +21,13 @@ public class Planete {
         this.uid = uid;
         this.nom = nom;
         this.taille = taille;
+        majUidMax(uid);
+    }
+
+    private void majUidMax(int uid) {
+        if(uid>uidMax){
+            uidMax = uid;
+        }
     }
 
     public int getUid() {
